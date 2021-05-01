@@ -88,7 +88,7 @@ tr:nth-child(1) {
     }
     ?>
 	<form method="post">
-		<table class="mt-5 mb-3" align="center" cellspacing="0" cellpadding="5" width="65%">
+		<table class="mt-5 mb-3" align="center" cellspacing="0" cellpadding="7" width="65%">
 			<tr align="center">
 				<th>Product ID</th>
 				<th>Name</th>
@@ -96,7 +96,7 @@ tr:nth-child(1) {
                 <th>Total Bids</th>
 				<th>Description</th>
 				<th>Status</th>
-                <th>Selling Price</th>
+                <th colspan="2">Selling Price </th>
 				<!--<th>Action</th>-->
 			</tr>
 			<?php
@@ -111,14 +111,23 @@ tr:nth-child(1) {
  				<td><?php echo $row_q1->price; ?></td>
 
                 <?php
-                $query3 = "select * from tbl_bid where pro_id = $row_q1->pro_id";
+               $query3 = "select * from tbl_bid where pro_id = $row_q1->pro_id ORDER BY bid_amount DESC";
                 $run_q3 = $con->query($query3);
                 $row_q3 = $run_q3->fetch_object();
+				$nub = $run_q3->num_rows;
                 ?>
-
+			
                 <td><?php echo $num_rows = $run_q3->num_rows; ?></td>
  				<td><?php echo $row_q1->description; ?></td>
                 <td><?php echo $row_q1->status; ?></td>
+
+				<?php 
+				if($nub>0)
+				{?>
+				<td><?php echo $row_q3->bid_amount; ?></td>
+				<?php
+				}?>
+						
  				<!--<td><a class="btn btn-primary" href="?sid=<?php echo $row_q1->pro_id; ?>&status=<?php echo $row_q1->status; ?>&pro_id=<?php echo $row_q1->pro_id; ?>">Change Status</a></td>-->
                 <td></td>
  			</tr>

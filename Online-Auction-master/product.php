@@ -186,17 +186,24 @@ body {/*
             while ($row_q1 = $run_q1->fetch_object()) {
                 $query2 = "select * from tbl_bid where pro_id = $row_q1->pro_id ORDER BY bid_amount DESC; ";
                 $run_q2 = $con->query($query2);
-                $bid_num = $run_q2->num_rows;?>
+                $bid_num = $run_q2->num_rows;
+                if($bid_num > 0)
+                {
+                    $final_price = ($run_q2->fetch_object())->bid_amount;
+                }
+                $run_q2 = $con->query($query2);
+                ?>
+                
                 <div class="card mt-5">
                     
 
-                    <div class="card-body <?php if ($row_q1->status == 'Sold') { echo 'sold'; } ?>">
+                    <div class="card-body <?php if ($row_q1->status == 'Sold') { echo 'sold';} ?>">
                         <div class="card-header mb-3 flex-container">
                             <div class="mr-3 ml-3 mt-1 mb-1">
                                 <h5 class="font-weight-light">This Product is&nbsp;<?php echo $row_q1->status; ?></h5>
                             </div>
                             <div class="mr-3 ml-3 mt-1 mb-1">
-                                <?php if ($row_q1->status != 'Sold') { ?>
+                                <?php if ($row_q1->status != 'Sold') {  $final_price = $row_q1->price;?>
                                     <a class="btn btn-info" href="?pro_id=<?php echo $row_q1->pro_id; ?>&status=<?php echo $row_q1->status; ?>">
                                         <?php 
                                         if ($row_q1->status == "On Sale") {
@@ -212,13 +219,14 @@ body {/*
 
                         <h3 class="card-title mt-4">Product&nbsp;Name:&nbsp;<?php echo $row_q1->name; ?></h3>
                         <div class="item"><h5 class="card-text mt-4 mr-5 font-weight-light">Product&nbsp;Description:&nbsp;<?php echo $row_q1->description; ?></h5></div>
-                        <h1 class="card-text mt-4 mb-3 font-weight-light">Price:&nbsp;&#8377;&nbsp;<?php echo $row_q1->price; ?></h1>
                         
+                        <h1 class="card-text mt-4 mb-3 font-weight-light">Base Price:&nbsp;&#8377;&nbsp;<?php echo $row_q1->price; ?></h1>
+                        <?php if ($row_q1->status == 'Sold') { ?>
+						<h1 class="card-text mt-4 mb-3 font-weight-light">Sold Price:&nbsp;&#8377;&nbsp;<?php echo $final_price; ?></h1>
+                        <?php } ?>
                         
-
-
                         <?php 
-                        if ($bid_num > 0 && $row_q1->status != 'Sold' ) { 
+                        if ($bid_num > 0 && $row_q1->status != 'Sold' ) {
                         ?>
 
                             <div class="people-bid">
