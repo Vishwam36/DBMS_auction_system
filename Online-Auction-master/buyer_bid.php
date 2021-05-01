@@ -30,6 +30,7 @@ if ($run_3->num_rows === 1) {
 
 $errormessage = "Your Bid Amount Should be greater then ". ($max_bid);
 $errormessage1 = "Seller can not bid";
+$errormessage2 = "Your bid is already at the top";
 
 if (isset($_REQUEST['bid'])) {
 	$bid_amount = $_REQUEST['bid_amount'];
@@ -37,12 +38,16 @@ if (isset($_REQUEST['bid'])) {
 	if($row_c->uid == ($row_1->uid)){
 		echo "<script type='text/javascript'>alert('$errormessage1');</script>";
 	}
+	else if($row_c->uid == $row_3->uid)
+	{
+		echo "<script type='text/javascript'>alert('$errormessage2');</script>";
+	}
 	else if ($bid_amount > ($max_bid)) {
 		$query2 = "insert into tbl_bid 	(pro_id, uid, bid_amount) values ('$pro_id', '$row_c->uid', '$bid_amount');";
 		$con->query($query2);
 		header("location:view_product.php?pro_id=$pro_id");
-	} else {
-		
+	}
+	else {
 		echo "<script type='text/javascript'>alert('$errormessage');</script>";
 	}
 }
