@@ -245,7 +245,7 @@ body {/*
                                         <!--<div class="flex-container">-->
                                         <div class="row">
                                             <div align="center" class="col-lg-4 col-sm-12">
-                                                <div><h4 class="font-weight-light"><?php echo $row_q3->name." ".$row_q3->surname; ?></h4></div>
+                                            <div><h4 class="font-weight-light"><?php echo $row_q3->name." ".$row_q3->surname." ".$row_q3->email ;?></h4></div>
                                             </div>
                                             <div align="center" class="col-lg-4 col-sm-12">
                                                 <div><h4 class="font-weight-light">Bid Amount:&nbsp;&nbsp;&#8377;&nbsp;<?php echo $row_q2->bid_amount;?></h4></div>

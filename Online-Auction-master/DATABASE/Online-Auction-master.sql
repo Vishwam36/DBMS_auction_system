@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 12, 2018 at 07:11 PM
+-- Generation Time: APRIL 11, 2021 
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.2.1
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `scs`
+-- Database: `online-auction-master`
 --
 
 -- --------------------------------------------------------
@@ -42,9 +42,10 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`admin_id`, `username`, `password`, `mobile number`, `name`, `surname`) VALUES
-(1, 'admin', 'admin', 9897969594, 'Chintan', 'Rajpara'),
-(2, 'admin2', 'admin2', 9192939495, 'Salman', 'Khan');
-
+(1, 'admin', 'admin', 1234567095, 'Chandramani', 'Kumar'),
+(2, 'admin2', 'admin2', 3124567893, 'Vishwam', 'Mundada'),
+(3, 'admin3', 'admin3', 1238767095, 'Anirudh', 'Gupta'),
+(4, 'admin4', 'admin4', 1089567095, 'Harsh', 'Kedia');
 -- --------------------------------------------------------
 
 --
@@ -62,15 +63,17 @@ CREATE TABLE `country` (
 
 INSERT INTO `country` (`cid`, `cname`) VALUES
 (1, 'India'),
-(2, 'America'),
+(2, 'USA'),
 (3, 'Australia'),
 (4, 'China'),
 (5, 'Japan'),
 (6, 'Russia'),
 (7, 'Dubai'),
 (8, 'South Africa'),
-(9, 'Nagaland'),
-(10, 'Pakistan');
+(9, 'South Korea'),
+(10, 'Srilanka'),
+(11, 'UK'),
+(12, 'Pakistan');
 
 -- --------------------------------------------------------
 

@@ -306,6 +306,7 @@ if (isset($_REQUEST['pro_id'])) {
 						//print_r($row_q3);
 						?>
 						<h5 class="card-title"><?php echo $row_q3->name." ".$row_q3->surname; ?></h5>
+						<h5 class="card-title"><?php echo " $row_q3->email"; ?></h5>
 						<h5 class="font-weight-light">Bid Amount:&nbsp;&nbsp;<?php echo $row_q2->bid_amount; ?></h5>
 
 						<?php

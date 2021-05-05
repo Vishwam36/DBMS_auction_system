@@ -43,10 +43,19 @@ if (isset($_REQUEST['submit'])) {
     $hobby = implode(", ", $_REQUEST['hb']);
     $country = $_REQUEST['cn'];
     $date = date('Y-m-d h:i:s');
-    $ins = "insert into user (name, surname, email, password, gender, hobby, country, dor) values ('$name', '$surname', '$email', '$password', '$gender', '$hobby', '$country', '$date');";
+    $errormsg="Already existing email, try another!";
+    $query5 = "select * from user where email = BINARY '$email'";
+    $run_q5 = $con->query($query5);
+    $row_login5 = $run_q5->fetch_object();
+    $num_rows = $run_q5->num_rows;	
+	if($num_rows>0)
+	echo "<script type='text/javascript'>alert('$errormsg');</script>";
+	else
+    {$ins = "insert into user (name, surname, email, password, gender, hobby, country, dor) values ('$name', '$surname', '$email', '$password', '$gender', '$hobby', '$country', '$date');";
     //echo $ins;
     $con->query($ins);
     header("location:registered.php");
+	}
 }
 
 if (isset($_REQUEST['admin_login'])) {
@@ -105,7 +114,7 @@ body {
 }
 
 .item-1 {
-    background-color: lightgreen;/*rgb(179, 55, 113);rgb(231, 76, 60);/*/
+    background-color: lightgreen;/rgb(179, 55, 113);rgb(231, 76, 60);//
 }
 
 .item-2 {
