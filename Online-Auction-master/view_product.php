@@ -1,10 +1,9 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //print_r($row_c);
 }
 
 if(!isset($_SESSION['user'])) {
@@ -19,9 +18,7 @@ if (isset($_REQUEST['pro_id'])) {
 	$pro_id = $_REQUEST['pro_id'];
 	$query1 = "select * from tbl_product where pro_id = $pro_id;";
 	$run_q1 = $con->query($query1);
-	$row_q1 = $run_q1->fetch_object();
-	//print_r($row_q1);
-		
+	$row_q1 = $run_q1->fetch_object();	
 }
 
 
@@ -44,9 +41,9 @@ if (isset($_REQUEST['pro_id'])) {
 
 
 
-/************************/
+/********/
 /* IMAGE POPUT STARTING */
-/************************/
+/********/
 
 
 
@@ -136,9 +133,9 @@ if (isset($_REQUEST['pro_id'])) {
     }
 }
 
-/**********************/
+/********/
 /* IMAGE POPUT ENDING */
-/**********************/
+/********/
 
 
 
@@ -173,7 +170,7 @@ if (isset($_REQUEST['pro_id'])) {
 }
 </style>
 <body>
-
+ 
 
 	<nav class="navbar navbar-expand-sm navbar-dark bg-nav">
 		<div class="container">
@@ -217,7 +214,20 @@ if (isset($_REQUEST['pro_id'])) {
 				<h2 class="card-title"><?php echo $row_q1->name; ?></h2>
 				<p class="card-text"><?php echo $row_q1->description; ?></p>
 				<div class="container">
-					<?php  
+					<?php
+					$bid_s_time = $row_q1->bidstarttime;
+        			$bid_e_time = $row_q1->bidendtime;
+        			$product_id = $row_q1->pro_id;
+
+        			$nt = new DateTime($bid_s_time);
+        			$bid_s_time = $nt->getTimestamp();
+
+
+        			$nt = new DateTime($bid_e_time);
+        			$bid_e_time = $nt->getTimestamp();
+
+        			$date = time();
+
 					$query4 = "select * from tbl_img where pro_id = $pro_id";
 					$run_q4 = $con->query($query4);
 					while ($row_q4 = $run_q4->fetch_object()) {
@@ -257,21 +267,17 @@ if (isset($_REQUEST['pro_id'])) {
 						    modal.style.display = "none";
 						}
 						</script>
-
-
-
-
-
-
-
-						<!-- <img class="img-fluid" src="<?php echo $image_destination; ?>" width="20%" alt="Product Image"> -->
 						<?php
 					}
 					?>
 				</div>
 				<br>
 				<h3 class="font-weight-light">Price: <?php echo $row_q1->price; ?></h3>
+				
+				<?php if($bid_s_time < $date) { ?>
 				<a href="buyer_bid.php?pro_id=<?php echo $row_q1->pro_id;?>" class="btn btn-secondary mt-3">Bid on this product</a>
+				<?php } ?>
+			
 			</div>
 		</div>
 

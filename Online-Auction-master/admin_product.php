@@ -6,7 +6,6 @@ include('db.php');
 
 if(isset($_SESSION['admin_login'])) {
     $row_c = $_SESSION['admin_login'];
-    //print_r($row_c);
 }
 
 
@@ -73,6 +72,7 @@ tr:nth-child(1) {
 }
 </style>
 <body>
+
 	<?php
     if (isset($_SESSION['admin_login'])) {
         ?>
@@ -92,12 +92,14 @@ tr:nth-child(1) {
 			<tr align="center">
 				<th>Product ID</th>
 				<th>Name</th>
+				 <th>Seller Id</th>
 				<th>Price by Seller</th>
                 <th>Total Bids</th>
 				<th>Description</th>
 				<th>Status</th>
-                <th colspan="2">Selling Price </th>
-				<!--<th>Action</th>-->
+                <th>Selling Price </th>
+				 <th colspan="2">Buyer Id </th>
+				
 			</tr>
 			<?php
             $query1 = "select * from tbl_product";
@@ -108,10 +110,11 @@ tr:nth-child(1) {
  				<td><?php echo $row_q1->pro_id; ?></td>
 
  				<td><?php echo $row_q1->name; ?></td>
+				<td><?php echo $row_q1->uid; ?></td>
  				<td><?php echo $row_q1->price; ?></td>
 
                 <?php
-               $query3 = "select * from tbl_bid where pro_id = $row_q1->pro_id ORDER BY bid_amount DESC";
+                $query3 = "select * from tbl_bid where pro_id = $row_q1->pro_id ORDER BY bid_amount DESC";
                 $run_q3 = $con->query($query3);
                 $row_q3 = $run_q3->fetch_object();
 				$nub = $run_q3->num_rows;
@@ -121,15 +124,33 @@ tr:nth-child(1) {
  				<td><?php echo $row_q1->description; ?></td>
                 <td><?php echo $row_q1->status; ?></td>
 
-				<?php 
-				if($nub>0)
-				{?>
+				<?php if($nub>0){?>
 				<td><?php echo $row_q3->bid_amount; ?></td>
-				<?php
-				}?>
+				<?php }else {?>
+				<td><?php echo "Not yet bidded"; ?></td>
+				<?php } ?>
+				
+				
+				
+				<?php if($nub>0){ ?>
+				<?php $query4 = "select * from tbl_purchase where bid_id = $row_q3->bid_id";
+                $run_q4 = $con->query($query4);
+                $row_q4 = $run_q4->fetch_object(); 
+				$nub1 = $run_q4->num_rows;
+				?>
+				<?php if($nub1>0){?>
+				<td><?php echo $row_q4->buyer_id; ?></td>
+				<?php }else {?>
+				<td><?php echo "Bid going on"; ?></td>
+				<?php } ?>
+				
+				<?php } else {?>
+				<td><?php echo "Not yet Bidded"; ?></td>
+				<?php } ?>
+			
+				
 						
- 				<!--<td><a class="btn btn-primary" href="?sid=<?php echo $row_q1->pro_id; ?>&status=<?php echo $row_q1->status; ?>&pro_id=<?php echo $row_q1->pro_id; ?>">Change Status</a></td>-->
-                <td></td>
+                <td></td> 
  			</tr>
             <?php 
             }

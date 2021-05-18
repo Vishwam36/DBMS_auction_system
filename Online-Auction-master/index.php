@@ -1,9 +1,8 @@
 <?php
 session_start();
 include 'db.php';
-
+include('pro_table_check.php');
 if (isset($_SESSION['user'])) {
-    //header("location:view.php");
     header("location:user_home.php");
 }
 
@@ -26,7 +25,6 @@ if (isset($_REQUEST['login'])) {
             }
 
             $_SESSION['user']=$row_login;
-            //header("location:view.php");
             header("location:user_home.php");
         }
     }
@@ -51,10 +49,10 @@ if (isset($_REQUEST['submit'])) {
 	if($num_rows>0)
 	echo "<script type='text/javascript'>alert('$errormsg');</script>";
 	else
-    {$ins = "insert into user (name, surname, email, password, gender, hobby, country, dor) values ('$name', '$surname', '$email', '$password', '$gender', '$hobby', '$country', '$date');";
-    //echo $ins;
-    $con->query($ins);
-    header("location:registered.php");
+    {
+		$ins = "insert into user (name, surname, email, password, gender, hobby, country, dor) values ('$name', '$surname', '$email', '$password', '$gender', '$hobby', '$country', '$date');";
+		$con->query($ins);
+		header("location:registered.php");
 	}
 }
 
@@ -114,7 +112,7 @@ body {
 }
 
 .item-1 {
-    background-color: lightgreen;/rgb(179, 55, 113);rgb(231, 76, 60);//
+    background-color: lightgreen;/*rgb(179, 55, 113);rgb(231, 76, 60);/*/
 }
 
 .item-2 {
@@ -133,24 +131,14 @@ body {
 
 
 <body>
-
+	 
     <nav class="navbar navbar-expand-sm navbar-dark bg-nav">
         <div class="container">
           <a style="color: #ffc107;" class="navbar-brand" href="index.php">
                 <img style="max-width:50px; margin-top: -7px;" src="logo/auction.svg">&nbsp;Online Auction
-            </a>
-              <!--<ul class="navbar-nav">
-                  <li class="nav-item">
-                      <a class="nav-link" href="index.php">Home</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="about.php">About</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="contact.php">Contact</a>
-                  </li>
-              </ul>-->
-          </div>
+          </a>
+             
+        </div>
     </nav>
     
 
@@ -170,16 +158,12 @@ body {
                     </tr>
                     <tr>
                         <th>Email</th>
-                        <td><input class="form-control" type="email" name="email" required="required"></td>
+                        <td><input name="email" type="email" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" class="form-control" id="email" required="required"></td>
                     </tr>
                     <tr>
                         <th>Password</th>
                         <td><input class="form-control" type="password" name="pass" required="required"></td>
                     </tr>
-                    <!--<tr>
-                        <th>Confirm Password</th>
-                        <td><input type="password" name="pass" required="required"></td>
-                    </tr>-->
                     <tr>
                         <th>Gender</th>
                         <td>
@@ -260,14 +244,28 @@ body {
                     </tr>
                     <tr>
                         <th>Password</th>
-                        <td><input class="form-control" type="Password" name="password" required="required" value="<?php
+                        <td><input class="form-control" type="Password" id="myInput" name="password" required="required" value="<?php
                         if(isset($_COOKIE['password'])){
                          echo $_COOKIE['password'];
                         }
                         ?>"></td>
                     </tr>
+					  
                     <tr align="center">
-                        <td colspan="2">
+                        <td colspan="1">
+                            <label><input type="checkbox" onclick="funcnmy()">Show Password</label>
+							<script>
+								function funcnmy() {
+							  var x = document.getElementById("myInput");
+							  if (x.type === "password") {
+								x.type = "text";
+							  } else {
+								x.type = "password";
+							  }
+							}
+							</script>
+                        </td>
+						<td colspan="2">
                             <label><input type="checkbox" name="rem">Remember Me</label>
                         </td>
                     </tr>

@@ -59,6 +59,7 @@ tr:nth-child(even) {
 </style>
 
 <body>
+
 	<h1  align="center" class="text-primary">ADMIN LOGIN</h1>
 	<form method="post">
 		<table border="0" align="center" cellpadding="5" cellspacing="0">
@@ -75,13 +76,26 @@ tr:nth-child(even) {
 			</tr>
 			<tr>
 				<td><span class="mandatory">*</span>Password</td>
-				<td><input type="Password" name="password" required="required" value="<?php
+				<td><input type="Password" name="password" id="weadm" required="required" value="<?php
 				if(isset($_COOKIE['password'])){
 					echo $_COOKIE['password'];
 				}
 				?>"></td>
 			</tr>
 			<tr align="center">
+			                <td colspan="1">
+                            <label><input type="checkbox" onclick="admin_funcn()">Show Password</label>
+							<script>
+								function admin_funcn() {
+							  var x = document.getElementById("weadm");
+							  if (x.type === "password") {
+								x.type = "text";
+							  } else {
+								x.type = "password";
+							  }
+							}
+							</script>
+                        
 				<td colspan="2">
 					<input type="checkbox" name="rem">Remember Me
 				</td>

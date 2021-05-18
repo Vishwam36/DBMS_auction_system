@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `online-auction-master`
+-- Database: `scs`
 --
 
 -- --------------------------------------------------------
@@ -43,7 +43,7 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`admin_id`, `username`, `password`, `mobile number`, `name`, `surname`) VALUES
 (1, 'admin', 'admin', 1234567095, 'Chandramani', 'Kumar'),
-(2, 'admin2', 'admin2', 3124567893, 'Vishwam', 'Mundada'),
+(2, 'admin2', 'admin2', 3124567893, 'Vishwam', 'Sriram Mundada'),
 (3, 'admin3', 'admin3', 1238767095, 'Anirudh', 'Gupta'),
 (4, 'admin4', 'admin4', 1089567095, 'Harsh', 'Kedia');
 -- --------------------------------------------------------
@@ -112,6 +112,8 @@ CREATE TABLE `tbl_product` (
   `price` int(11) NOT NULL,
   `description` varchar(250) NOT NULL,
   `uid` int(11) NOT NULL,
+  `bidstarttime` datetime NOT NULL,
+  `bidendtime` datetime NOT NULL,
   `status` enum('On Sale','Sold','Disable') NOT NULL DEFAULT 'On Sale'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -123,7 +125,8 @@ CREATE TABLE `tbl_product` (
 
 CREATE TABLE `tbl_purchase` (
   `purchase_id` int(11) NOT NULL,
-  `bid_id` int(11) NOT NULL
+  `bid_id` int(11) NOT NULL,
+  `buyer_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

@@ -1,10 +1,9 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //print_r($row_c);
 }
 
 if (!isset($_SESSION['user'])) {
@@ -30,8 +29,13 @@ if (isset($_REQUEST['pro_id'])) {
 }
 
 if (isset($_REQUEST['bid_id'])) {
+	
     $bid_id = $_REQUEST['bid_id'];
-    $query1 = "insert into tbl_purchase (bid_id) values ($bid_id);";
+	$query3 = "select * from tbl_bid where bid_id = '$bid_id'; ";
+    $run_q3 = $con->query($query3);
+    $row_q3 = $run_q3->fetch_object();
+	$buyer_id=$row_q3->uid;
+    $query1 = "insert into tbl_purchase (bid_id,buyer_id) values ($bid_id,$buyer_id);";
     $con->query($query1);
 
     $query2 = "select * from tbl_bid where bid_id = '$bid_id'; ";
@@ -56,7 +60,7 @@ body {/*
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;*/
-    /*background-color: rgba(23, 162, 184, .3);*/
+    /background-color: rgba(23, 162, 184, .3);/
 }
 
 /*
@@ -101,9 +105,9 @@ body {/*
 }*/
 
 .card-body {
-    /*background-color: rgba(207, 106, 135, .65);*/
+    /background-color: rgba(207, 106, 135, .65);/
     background-color: #ddd;
-    /*color: #e5e5e5;*/
+    /color: #e5e5e5;/
     border: none;
     border-radius: 5px;
 }
@@ -113,7 +117,7 @@ body {/*
 }
 
 .card-hover:hover {
-    /*background-color: rgba(231, 76, 60, .5);*/
+    /background-color: rgba(231, 76, 60, .5);/
     background-color: #17a2b8;
 }
 
@@ -189,7 +193,18 @@ body {/*
                 $bid_num = $run_q2->num_rows;
                 if($bid_num > 0)
                 {
-                    $final_price = ($run_q2->fetch_object())->bid_amount;
+                    $res_q2 = $run_q2->fetch_object();
+                    $buyer_id = $res_q2->uid;
+                    $query_user = "select * from user where uid = '$buyer_id'";
+                    $run_user = $con->query($query_user);
+                    $row_user = $run_user->fetch_object();
+                    $name = $row_user->name. " " . $row_user->surname;
+                    $final_price = ($res_q2)->bid_amount;
+                }
+                else
+                {
+                    $name = "No one";
+                    $final_price = "Unsold";
                 }
                 $run_q2 = $con->query($query2);
                 ?>
@@ -200,7 +215,13 @@ body {/*
                     <div class="card-body <?php if ($row_q1->status == 'Sold') { echo 'sold';} ?>">
                         <div class="card-header mb-3 flex-container">
                             <div class="mr-3 ml-3 mt-1 mb-1">
-                                <h5 class="font-weight-light">This Product is&nbsp;<?php echo $row_q1->status; ?></h5>
+                                <?php if($row_q1->status == 'Sold') { ?> 
+                                    <h5 class="font-weight-light">This Product is&nbsp;<?php echo $row_q1->status; ?> to <?php echo $name ?> </h5> 
+                                <?php } 
+                                else { ?> 
+                                    <h5 class="font-weight-light">This Product is&nbsp;<?php echo $row_q1->status; ?></h5> 
+                                <?php } ?>
+                                
                             </div>
                             <div class="mr-3 ml-3 mt-1 mb-1">
                                 <?php if ($row_q1->status != 'Sold') {  $final_price = $row_q1->price;?>
@@ -219,8 +240,7 @@ body {/*
 
                         <h3 class="card-title mt-4">Product&nbsp;Name:&nbsp;<?php echo $row_q1->name; ?></h3>
                         <div class="item"><h5 class="card-text mt-4 mr-5 font-weight-light">Product&nbsp;Description:&nbsp;<?php echo $row_q1->description; ?></h5></div>
-                        
-                        <h1 class="card-text mt-4 mb-3 font-weight-light">Base Price:&nbsp;&#8377;&nbsp;<?php echo $row_q1->price; ?></h1>
+                         <h1 class="card-text mt-4 mb-3 font-weight-light">Base Price:&nbsp;&#8377;&nbsp;<?php echo $row_q1->price; ?></h1>
                         <?php if ($row_q1->status == 'Sold') { ?>
 						<h1 class="card-text mt-4 mb-3 font-weight-light">Sold Price:&nbsp;&#8377;&nbsp;<?php echo $final_price; ?></h1>
                         <?php } ?>
@@ -233,36 +253,67 @@ body {/*
                             <div class="card-deck mt-5 ml-5 mr-5">
                                 <h4 align="center" class="card-text font-weight-light"><!--Total number of bids --><?php echo $bid_num; ?>&nbsp;People bid on this product</h4>
                                 <?php
-                                // while ($row_q2 = $run_q2->fetch_object()) 
-                                $row_q2 = $run_q2->fetch_object();
+                                while ($row_q2 = $run_q2->fetch_object()) 
                                 {
                                     $query3 = "select * from user where uid = $row_q2->uid; ";
                                     $run_q3 = $con->query($query3);
                                     $row_q3 = $run_q3->fetch_object();
+
+                                    $bid_s_time = $row_q1->bidstarttime;
+                                    $nt = new DateTime($bid_s_time);
+	                                $bid_s_time = $nt->getTimestamp();
+                                    
+                                    $bid_e_time = $row_q1->bidendtime;
+	                                $nt = new DateTime($bid_e_time);
+	                                $bid_e_time = $nt->getTimestamp();
+
+                                    $date = time();
+
+	                                if($bid_s_time > $date)
+	                                {
+	                                	$sellstatus = "yet to bid";
+	                                }
+	                                else if($bid_s_time <= $date && $bid_e_time >= $date)
+	                                {
+	                                	$sellstatus = "ongoing";
+	                                }
+	                                else if($bid_e_time < $date)
+	                                {
+	                                	$sellstatus = "finished";
+                                        $bid_id = $row_q2->bid_id;
+                                        
+                                        $query13 = "select * from tbl_bid where bid_id = '$bid_id'; ";
+                                        $run_q13 = $con->query($query13);
+                                        $row_q13 = $run_q13->fetch_object();
+	                                    $buyer_id=$row_q13->uid;
+                                        $query11 = "insert into tbl_purchase (bid_id,buyer_id) values ($bid_id,$buyer_id);";
+                                        $con->query($query11);
+                                                                        
+                                        $query12 = "select * from tbl_bid where bid_id = '$bid_id'; ";
+                                        $run_q12 = $con->query($query12);
+                                        $row_q12 = $run_q12->fetch_object();
+                                        
+                                                                        
+                                        $query13 = "update tbl_product set status = 'Sold' where pro_id = '$row_q12->pro_id';";
+                                        $con->query($query13);
+                                        
+	                                }
+
                                 ?>
                                 <div class="card card-hover">
                                     <div class="card-body text-info">
-                                        <!--<div class="flex-container">-->
                                         <div class="row">
                                             <div align="center" class="col-lg-4 col-sm-12">
-                                            <div><h4 class="font-weight-light"><?php echo $row_q3->name." ".$row_q3->surname." ".$row_q3->email ;?></h4></div>
+                                                <div><h4 class="font-weight-light"><?php echo $row_q3->name." ".$row_q3->surname." ".$row_q3->email ;?></h4></div>
                                             </div>
                                             <div align="center" class="col-lg-4 col-sm-12">
                                                 <div><h4 class="font-weight-light">Bid Amount:&nbsp;&nbsp;&#8377;&nbsp;<?php echo $row_q2->bid_amount;?></h4></div>
                                             </div>
                                             <div align="center" class="col-lg-4 col-sm-12">
                                                 <div>
-                                                    <a class="btn btn-outline-info" href="?bid_id=<?php  echo $row_q2->bid_id; ?>">
-                                                        <?php 
-                                                        if ($row_q3->gender == 'Male') {
-                                                            echo "Sell Him";
-                                                        } else {
-                                                            echo "Sell Her";
-                                                        } 
-                                                        ?>
-                                                    </a>
+                                                  
                                                 </div>
-                                            </div>    
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -272,7 +323,7 @@ body {/*
                             </div>
                         </div>
                             <?php 
-                            } 
+                            }
                         if ($bid_num == 0 ) {
                         ?>
                             <div class="card-footer text-danger">

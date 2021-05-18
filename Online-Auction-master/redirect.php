@@ -1,12 +1,11 @@
 <?php 
 include('db.php');
- 
+include('pro_table_check.php');
 if (isset($_REQUEST['eid'])) {
 	$eid = $_REQUEST['eid'];
  	$edit = "select * from user where uid = '$eid' ";
  	$run_e = $con->query($edit);
  	$row_e = $run_e->fetch_object();
-	//print_r($row_e);
 }
 
 
@@ -27,7 +26,7 @@ if (isset($_REQUEST['update'])) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Chintan Rajpara</title>
+	<title>Multi User Auction</title>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <style>
@@ -40,6 +39,7 @@ tr:nth-child(even) {
 }
 </style>
 <body>
+ 
 	<h1  align="center" class="text-primary">Edit Profile</h1>
  	<form method="post">
  		<table  align="center" cellspacing="0" cellpadding="5" width="500" >

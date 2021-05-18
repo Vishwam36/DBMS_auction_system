@@ -1,10 +1,9 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //print_r($row_c);
 }
 $home = false;
 $view = false;
@@ -14,7 +13,6 @@ $products = false;
 if (isset($_REQUEST['pro_id'])) {
 	$pro_id = $_REQUEST['pro_id'];
 	$query1 = "select * from tbl_product where pro_id = $pro_id; ";
-	//echo $query1;
 	$run_1 = $con->query($query1);
 	$row_1 = $run_1->fetch_object();
 }
@@ -38,7 +36,7 @@ if (isset($_REQUEST['bid'])) {
 	if($row_c->uid == ($row_1->uid)){
 		echo "<script type='text/javascript'>alert('$errormessage1');</script>";
 	}
-	else if($row_c->uid == $row_3->uid)
+    else if($run_3->num_rows === 1 && $row_c->uid == $row_3->uid)
 	{
 		echo "<script type='text/javascript'>alert('$errormessage2');</script>";
 	}
@@ -75,7 +73,7 @@ if (isset($_REQUEST['bid'])) {
 </style>
 
 <body>
-
+ 
 	<?php include 'nav.php'; ?>
 
 <br>

@@ -1,10 +1,9 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //print_r($row_c);
 }
 
 if (!isset($_SESSION['user'])) {
@@ -49,6 +48,7 @@ $products = false;
 </style>
 
 <body>
+
 	<?php include 'nav.php'; ?>
 
 <br><br>
@@ -75,7 +75,6 @@ $products = false;
                 <div class="col-12 mt-4">
 					<div class="card">
 						<div class="card-body">
-							<!-- <a class="text-dark" href="view_product.php?pro_id=<?php echo $row_pro->name; ?>"><h3 class="card-title mt-4">Product&nbsp;Name:&nbsp;<?php echo $row_pro->name; ?></h3></a> -->
 							<h3 class="text-dark"><h3 class="card-title mt-4">You&nbsp;got:&nbsp;<?php echo $row_pro->name; ?></h3></h3>
 							<h3 class="card-text font-weight-light">Original Price:&nbsp;&#8377;&nbsp;<?php echo $row_pro->price; ?></h3>
 							<h3 class="card-text font-weight-light">Bid&nbsp;you&nbsp;made&nbsp;for&nbsp;this&nbsp;Product:&nbsp;&#8377;&nbsp;<?php echo $row_bid->bid_amount; ?></h3>

@@ -1,15 +1,14 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //print_r($row_c);
 }
 
 
 if (isset($_SESSION['admin_login'])) {
-
+  
 } else if (!isset($_SESSION['user'])) {
     header('location:index.php');
     
@@ -172,7 +171,6 @@ tr:nth-child(1) {
  				<td><?php echo $row_j->cname; ?></td>
                 <td>
                     <?php
-                    //echo date('Y/m/d H:i:s', $numberofsecs);
                     $c_date = date('Y-m-d h:i:s');
                     $tot_time = strtotime($c_date) - strtotime($row_j->dor);
                     $day = (int)($tot_time / (24*60*60));
@@ -192,7 +190,7 @@ tr:nth-child(1) {
                         echo " Hours ";
                     }
                     else {
-                        echo " hour ";
+                        echo " Hour ";
                     }
 
                     echo ($min);

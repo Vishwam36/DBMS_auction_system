@@ -1,12 +1,11 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 
 
 if(isset($_SESSION['admin_login'])) {
     $row_c = $_SESSION['admin_login'];
-    //print_r($row_c);
 }
 
 ?>
@@ -52,6 +51,7 @@ div
 }
 </style>
 <body>
+
 	<div class="dive" >
     	<a class="btn btn-danger" href="logout.php">LOGOUT</a>
     </div>

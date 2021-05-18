@@ -1,10 +1,9 @@
 <?php 
 session_start();
 include('db.php');
-
+include('pro_table_check.php');
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //print_r($row_c);
 }
 
 $home = false;
@@ -16,7 +15,16 @@ if (isset($_REQUEST['insert_product'])) {
 	$name = $_REQUEST['name'];
 	$description = $_REQUEST['desc'];
 	$price = $_REQUEST['price'];
-	$query1 = "insert into tbl_product (name, price, description, uid) values ('$name', '$price', '$description', '$row_c->uid')";
+	$starttime= $_REQUEST['starttime'];
+	$endtime =$_REQUEST['endtime'];
+	$error_date_enter = "End time for an auction must be greater than starttime of it";
+	
+	if($endtime<=$starttime)
+	{
+		echo "<script type='text/javascript'>alert('$error_date_enter');</script>"; 
+	}
+	else{
+	$query1 = "insert into tbl_product (name, price, description, uid, bidstarttime, bidendtime) values ('$name', '$price', '$description', '$row_c->uid','$starttime','$endtime')";
 
 	$file = $_FILES['img'];
 	print_r($file);
@@ -87,25 +95,13 @@ if (isset($_REQUEST['insert_product'])) {
 			$row_2 = $run_2->fetch_object();
 			$pro_id = $row_2->pro_id;
 			$query3 = "insert into tbl_img (img_name, pro_id) values ('$fileNameNew', $pro_id);";
-			/*echo $query3;
-			echo "<script type='text/javascript'>alert('$query3');</script>";*/
 			$con->query($query3);
 			move_uploaded_file($fileTmpName, $fileDestination);
-			//echo "<script type='text/javascript'>alert('$row_2->pro_id');</script>";
 			header("location:user_home.php");
 		}
 
 	}
-
-
-
-
-
-
-
-	
-
-	
+	}
 }
 
 ?>
@@ -162,35 +158,9 @@ table {
 }
 </style>
 <body>
-
+ 
 	<?php include 'nav.php'; ?>
 
-	<!-- <nav class="navbar navbar-expand-sm navbar-dark bg-nav">
-		<div class="container">
-			<a style="color: #ffc107;" class="navbar-brand" href="index.php">
-				<img style="max-width:50px; margin-top: -7px;" src="logo/auction.svg">&nbsp;Online Auction
-			</a>
-			<div align="center">
-				<a class="btn btn-warning" href="new_product.php">Add A Product For Bid</a>
-			</div>
-			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link" href="index.php">Home</a>
-				</li>
-				<li class="nav-item dropdown">
-					<a href="#" class="nav-link dropdown-toggle text-warning" data-toggle="dropdown"><?php echo $row_c->name." ".$row_c->surname;?></a>
-					<div class="dropdown-menu bg-darkblue">
-						<a href="view.php" class="text-warning dropdown-item">View Profile</a>
-						<a href="bid.php" class="text-warning dropdown-item">Bids I made on Products</a>
-						<a href="product.php" class="text-warning dropdown-item">Products I put for Sale</a>
-					</div>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link text-danger" href="logout.php">Logout</a>
-				</li>
-			</ul>
-		</div>
-	</nav> -->
 <br>
 <br>
 	<form method="post" enctype="multipart/form-data">
@@ -204,20 +174,26 @@ table {
 					<tr>
 						<th>Description</th>
 						<td><textarea name="desc" cols="30" rows="5" required="required"></textarea></td>
-						<!--<td><input type="text" name="desc"></td>-->
 					</tr>
 					<tr>
-						<td>
+						<th>
 							Put images for your product
-						</td>
+						</th>
 						<td>
-							<!-- <input type="file" name="img"> -->
 							<input type="file" name="img[]" required="required" multiple="multiple">
 						</td>
 					</tr>
 					<tr>
 						<th>Minimum Selling Price</th>
 						<td><input type="number" name="price" required="required"></td>
+					</tr>
+					<tr>
+					<th>Start time of bid</th>
+						<td><input type="datetime-local" id="starttime" name="starttime" required="required"></td>
+					</tr>
+					<tr>
+					<th>End time of bid</th>
+						<td><input type="datetime-local" id="endtime" name="endtime" required="required"></td>
 					</tr>
 					<tr align="center">
 						<td colspan="2"><input class="btn btn-secondary" type="submit" name="insert_product" value="OK"></td>

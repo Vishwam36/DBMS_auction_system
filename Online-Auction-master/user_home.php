@@ -1,11 +1,10 @@
 <?php 
 session_start();
 include('db.php');
+include('pro_table_check.php');
 
 if(isset($_SESSION['user'])) {
     $row_c = $_SESSION['user'];
-    //echo "<br>";echo "<br>";echo "<br>";echo "<br>";echo "<br>";echo "<br>";echo "<br>";
-    //	print_r($row_c);
 }
 
 if(!isset($_SESSION['user'])) {
@@ -16,25 +15,6 @@ $home = true;
 $view = false;
 $bids = false;
 $products = false;
-
-if (isset($_REQUEST['pro_id'])) {
-	$pro_id = $_REQUEST['pro_id'];
-	$purchase_quantity = 1;
-	$query2 = "select * from product where pro_id = '$pro_id'";
-	$run_q2 = $con->query($query2);
-	$row_q2 = $run_q2->fetch_object();
-	//echo $row_q2->quantity;
-	if (($row_q2->quantity - $purchase_quantity)  >= 0) {
-		$uid = $row_c->uid;
-		$query3 = "insert into purchase (pro_id, uid, quantity) values ('$pro_id', '$uid', '$purchase_quantity')";
-		$con->query($query3);
-		$row_q2->quantity = $row_q2->quantity - $purchase_quantity;
-		$query4 = "update product set quantity = '$row_q2->quantity' where pro_id = '$pro_id' ";
-		$con->query($query4);
-		header("location:product_purchase.php");
-	} 
-
-}
 
 ?>
 
@@ -122,52 +102,15 @@ a.text:focus {
 </style>
 
 <body>
+
 	<?php include 'nav.php'; ?>
 
-	<!-- <nav class="navbar navbar-expand-sm navbar-dark bg-nav animated fadeInDown">
-		<div class="container">
-
-			<a style="color: #ffc107;" class="navbar-brand" href="index.php">
-				<img style="max-width:50px; margin-top: -7px;" src="logo/auction.svg">&nbsp;Online Auction
-			</a>
-			<div align="center">
-				<a class="btn btn-warning" href="new_product.php">Add A Product For Bid</a>
-			</div>
-			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link <?php if ($home == true) { echo 'active'; }?>" href="index.php">Home</a>
-				</li>
-				<li class="nav-item dropdown">
-					<a href="#" class="nav-link dropdown-toggle text-warning" data-toggle="dropdown"><?php echo $row_c->name." ".$row_c->surname;?></a>
-					<div class="dropdown-menu bg-darkblue">
-						<a href="view.php" class="text-warning dropdown-item <?php if ($view == true) { echo 'active'; }?>">View Profile</a>
-						<a href="bid.php" class="text-warning dropdown-item <?php if ($bids == true) { echo 'active'; }?>">Bids I made on Products</a>
-						<a href="product.php" class="text-warning dropdown-item <?php if ($products == true) { echo 'active'; }?>">Products I put for Sale</a>
-					</div>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link text-danger" href="logout.php">Logout</a>
-				</li>
-			</ul>
-		</div>
-	</nav> -->
-
-
-
-
-				
-<!--
-	<div align="center">
-		<a href="bid.php">Bids I made on Products</a>&nbsp;&nbsp;|&nbsp;
-		<a href="product.php">Products I put for Sale</a>
-	</div>
--->
+		
 <br><br><br>
 
     <?php
     $query1 = "select * from tbl_product where status = 'On Sale' ORDER BY pro_id DESC;";
 	$run_q1 = $con->query($query1);
-	//print_r($run_q1);
 	$showing_products = $run_q1->num_rows;
     ?>
 
@@ -182,6 +125,19 @@ a.text:focus {
 				<?php
 				
 				while ($row_q1 = $run_q1->fetch_object()) {
+					$bid_s_time = $row_q1->bidstarttime;
+        			$bid_e_time = $row_q1->bidendtime;
+        			$product_id = $row_q1->pro_id;
+
+        			$nt = new DateTime($bid_s_time);
+        			$bid_s_time = $nt->getTimestamp();
+
+
+        			$nt = new DateTime($bid_e_time);
+        			$bid_e_time = $nt->getTimestamp();
+
+        			$date = time();
+
 					$pro_id = $row_q1->pro_id;
 					$query5 = "select * from tbl_bid where pro_id = $pro_id;";
 					$run_q5 = $con->query($query5);
@@ -196,12 +152,20 @@ a.text:focus {
 									$image_name = $row_q6->img_name;
 									$image_destination = "product_images/".$image_name;
 									?>
+									<h4 class="btn btn-sm btn-light mt-3"><?php echo "Bid ends : $row_q1->bidendtime"; ?></h4>
 									<img class="product_img card-img-top" src="<?php echo $image_destination; ?>"  height="200vh" width="100%" alt="Product Image">
 									<div class="card-body bg-gray">
 										<a class="card-title text-dark" href="view_product.php?pro_id=<?php echo $pro_id; ?>"><h5><?php echo $row_q1->name; ?></h5></a>
-										<!--<p class="card-text"><?php echo $row_q1->description; ?></p>-->
+										
 										<h4 class="font-weight-light">&nbsp;&#8377;<?php echo $row_q1->price; ?></h4>
+										
+										<?php if($bid_s_time < $date) { ?>
 										<a href="buyer_bid.php?pro_id=<?php echo $row_q1->pro_id;?>" class="btn btn-sm btn-light mt-3">Bid</a>
+										<?php }
+										else { ?>
+										<h4 class="btn btn-sm btn-light mt-3"><?php echo "Bid has not started"; ?></h4>
+										<?php } ?>
+
 									</div>
 									<div class="card-footer bg-card-footer text-muted">
 										<?php
@@ -226,8 +190,6 @@ a.text:focus {
 	
 
 
-  <!--<script src="js/bootstrap.bundle.js"></script>
-  <script src="js/bootstrap.js"></script>-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
